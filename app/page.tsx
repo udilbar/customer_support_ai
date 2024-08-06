@@ -17,17 +17,32 @@ export default function Home() {
   const sendMessage = async () => {
     const userMessage = {role: "user", content: message};
     setMessage("");
-    setMessages((messages: any) => [...messages, userMessage])
-    const response = await fetch("/api/chat", {
+    setMessages((messages: any) => [...messages, userMessage, {role: "assistant", content: ""}])
+    const response = fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify([...messages, userMessage])
-    });
-    const data = await response.json();
-    console.log(data)
-    setMessages((messages: any) => [...messages, {role: "assistant", content: data.message}])
+    }).then(async (res) => {
+      const reader = res.body?.getReader();
+      const decoder = new TextDecoder();
+      let result = "";
+      if (reader) {
+        return reader.read().then(function processText({done, value}): string | Promise<string> {
+          if (done) return result;
+          const text = decoder.decode(value || new Uint8Array(), {stream: true});
+          setMessages((messages: any) => {
+            const lastMessage = messages[messages.length - 1];
+            const otherMessages = messages.slice(0, messages.length - 1);
+            return [...otherMessages, {...lastMessage, content: lastMessage.content + text}]
+          })
+          return reader.read().then(processText)
+        })
+      }
+    })
+    
+    // setMessages((messages: any) => [...messages, {role: "assistant", content: data.message}])
   }
 
   return (
