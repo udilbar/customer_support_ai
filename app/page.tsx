@@ -3,6 +3,7 @@
 import AssistantOutlinedIcon from '@mui/icons-material/AssistantOutlined';
 import { Box, Divider, TextField, List, ListItem, ListItemText, Button } from '@mui/material';
 import { useState } from 'react';
+import Markdown from 'react-markdown';
 
 export default function Home() {
 
@@ -61,7 +62,9 @@ export default function Home() {
                     <AssistantOutlinedIcon />
                   </Box>
                   <Box display="flex" flexDirection="column">
-                    <ListItemText primary={message.content}></ListItemText>
+                    <ListItemText primary={
+                      <Markdown>{message.content}</Markdown>
+                    }></ListItemText>
                     <ListItemText secondary={message.sentAt}></ListItemText>
                   </Box>
                 </ListItem>
