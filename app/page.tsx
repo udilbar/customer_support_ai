@@ -11,15 +11,15 @@ export default function Home() {
     {
       role: "assistant",
       content: "Hi! I'm the Headstarter support assistant. How can I help you today?",
-      sentAt: new Date().toLocaleTimeString()
+      sentAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
   const [message, setMessage] = useState<any>("");
 
   const sendMessage = async () => {
-    const userMessage = {role: "user", content: message, sentAt: new Date().toLocaleTimeString()};
+    const userMessage = {role: "user", content: message, sentAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })};
     setMessage("");
-    setMessages((messages: any) => [...messages, userMessage, {role: "assistant", content: "...", sentAt: new Date().toLocaleTimeString()}])
+    setMessages((messages: any) => [...messages, userMessage, {role: "assistant", content: "...", sentAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}])
     fetch("/api/chat", {
       method: "POST",
       headers: {
@@ -52,7 +52,7 @@ export default function Home() {
 
   return (
     <Box display="flex" alignItems="center" justifyContent="center" width="100%" height="100vh">
-      <Box display="flex" flexDirection="column" width="700px" height="75%" border="1px solid #cccccc" borderRadius="10px">
+      <Box display="flex" flexDirection="column" width="700px" height="75%" border="1px solid #cccccc" borderRadius="10px" bgcolor="#ffffff">
         <List sx={{display: "flex", flexDirection: "column", flexGrow: 1, overflowY: "auto", padding: "30px 15px"}}>
           {
             messages.map((message: any, key: number) => (
