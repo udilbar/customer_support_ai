@@ -1,7 +1,7 @@
 "use client";
 
 import AssistantOutlinedIcon from '@mui/icons-material/AssistantOutlined';
-import { Box, Divider, TextField, List, ListItem, Avatar, ListItemText, Button } from '@mui/material';
+import { Box, Divider, TextField, List, ListItem, ListItemText, Button } from '@mui/material';
 import { useState } from 'react';
 
 export default function Home() {
@@ -9,16 +9,17 @@ export default function Home() {
   const [messages, setMessages] = useState<any>([
     {
       role: "assistant",
-      content: "Hi! I'm the Headstarter support assistant. How can I help you today?"
+      content: "Hi! I'm the Headstarter support assistant. How can I help you today?",
+      sentAt: new Date().toLocaleTimeString()
     }
   ]);
   const [message, setMessage] = useState<any>("");
 
   const sendMessage = async () => {
-    const userMessage = {role: "user", content: message};
+    const userMessage = {role: "user", content: message, sentAt: new Date().toLocaleTimeString()};
     setMessage("");
-    setMessages((messages: any) => [...messages, userMessage, {role: "assistant", content: ""}])
-    const response = fetch("/api/chat", {
+    setMessages((messages: any) => [...messages, userMessage, {role: "assistant", content: "...", sentAt: new Date().toLocaleTimeString()}])
+    fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -35,6 +36,9 @@ export default function Home() {
           setMessages((messages: any) => {
             const lastMessage = messages[messages.length - 1];
             const otherMessages = messages.slice(0, messages.length - 1);
+            if (lastMessage.content === "...") {
+              lastMessage.content = "";
+            }
             return [...otherMessages, {...lastMessage, content: lastMessage.content + text}]
           })
           return reader.read().then(processText)
@@ -58,14 +62,14 @@ export default function Home() {
                   </Box>
                   <Box display="flex" flexDirection="column">
                     <ListItemText primary={message.content}></ListItemText>
-                    <ListItemText secondary="09:30"></ListItemText>
+                    <ListItemText secondary={message.sentAt}></ListItemText>
                   </Box>
                 </ListItem>
               ) : (
-                <ListItem key="2" sx={{display: "flex", gap: "15px", alignSelf: "flex-end", bgcolor: "rgb(244,244,244)", width: "fit-content", borderRadius: "20px"}} >
+                <ListItem key={key} sx={{display: "flex", gap: "15px", alignSelf: "flex-end", bgcolor: "rgb(244,244,244)", width: "fit-content", borderRadius: "20px"}} >
                   <Box display="flex" flexDirection="column" textAlign="right">
                     <ListItemText primary={message.content}></ListItemText>
-                    <ListItemText secondary="09:30"></ListItemText>
+                    <ListItemText secondary={message.sentAt}></ListItemText>
                   </Box>
                 </ListItem>
               )
